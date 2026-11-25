@@ -12,24 +12,24 @@ search ak47 low poly | max 15000
 search m4a1 rifle low poly | max 15000
 search pistol silencer low poly | max 10000
 search mp5 low poly | max 15000
-search sniper rifle low poly | max 15000
+search sniper rifle svd | max 20000
 search combat knife low poly | max 5000
-search frag grenade low poly | max 3000
+search m67 grenade | max 5000
 
 # --- buildings and structures ---
 search military barracks | max 60000
 search military watchtower | max 40000
 search chain link fence | max 20000
 search military gate checkpoint | max 40000
-search hangar | max 60000
-search military bunker | max 50000
+search aircraft hangar | max 60000
+search concrete bunker military | max 50000
 search sandbags | max 20000
 search concrete barrier jersey | max 10000
-search radar military | max 40000
+search radar dish | max 40000
 search military crate | max 10000
 search ammo box | max 8000
 
 # --- vehicles ---
-search military truck low poly | max 40000
+search army truck | max 40000
 search military jeep low poly | max 40000
 search transport helicopter low poly | max 50000

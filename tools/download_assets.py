@@ -64,6 +64,8 @@ def read_list(name):
 # ------------------------------------------------------------------ Sketchfab
 
 ALLOWED_LICENSES = ("CC Attribution", "CC0 Public Domain")
+BLOCKED_WORDS = ("sci-fi", "scifi", "sci fi", "fantasy", "cartoon", "toy", "stylized", "futuristic", "cyberpunk",
+                 "anime", "minecraft", "voxel", "lego", "nerf")
 
 
 def sf_license_ok(info):
@@ -79,6 +81,9 @@ def sf_search(query, max_faces):
     })
     res = get(f"https://api.sketchfab.com/v3/search?{q}").get("results", [])
     for r in res:
+        text = (r.get("name", "") + " " + " ".join(t.get("name", "") for t in r.get("tags", []))).lower()
+        if any(b in text for b in BLOCKED_WORDS):
+            continue
         lab = (r.get("license") or {}).get("label", "") if isinstance(r.get("license"), dict) else ""
         if lab and lab not in ALLOWED_LICENSES:
             continue
