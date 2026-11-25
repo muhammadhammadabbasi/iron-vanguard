@@ -1,0 +1,363 @@
+{
+ "voices": {
+  "kade": {
+   "model": "en_US-ryan-high",
+   "radio": false,
+   "length_scale": 1.0
+  },
+  "malik": {
+   "model": "en_US-lessac-high",
+   "radio": true,
+   "length_scale": 1.0
+  },
+  "raven": {
+   "model": "en_US-joe-medium",
+   "radio": true,
+   "length_scale": 0.95
+  },
+  "rauf": {
+   "model": "en_GB-alan-medium",
+   "radio": false,
+   "length_scale": 1.0
+  },
+  "enemy1": {
+   "model": "en_GB-northern_english_male-medium",
+   "radio": false,
+   "length_scale": 0.9,
+   "pitch": 0.92
+  },
+  "enemy2": {
+   "model": "en_US-ryan-medium",
+   "radio": false,
+   "length_scale": 0.9,
+   "pitch": 0.85
+  }
+ },
+ "lines": [
+  {
+   "id": "m1_plane_1",
+   "speaker": "malik",
+   "text": "Vanguard One, this is Malik. Two minutes to the drop zone. Final check."
+  },
+  {
+   "id": "m1_plane_2",
+   "speaker": "kade",
+   "text": "Chute's good. Rifle's good. Let's get this done."
+  },
+  {
+   "id": "m1_plane_3",
+   "speaker": "malik",
+   "text": "The Red Jackals hold a fuel outpost below you. Their commander keeps a laptop with all their supply routes. We want it."
+  },
+  {
+   "id": "m1_plane_4",
+   "speaker": "malik",
+   "text": "Ramp is open. Green light. Go, go, go!"
+  },
+  {
+   "id": "m1_freefall",
+   "speaker": "malik",
+   "text": "Watch your altitude, Kade. Open your chute before you hit five hundred metres."
+  },
+  {
+   "id": "m1_chute",
+   "speaker": "kade",
+   "text": "Chute open."
+  },
+  {
+   "id": "m1_steer",
+   "speaker": "malik",
+   "text": "I see you. Steer for the green smoke, west of the outpost."
+  },
+  {
+   "id": "m1_landed",
+   "speaker": "malik",
+   "text": "Good landing. The outpost is to the north east. Stay quiet. If they see you, they'll sound the alarm."
+  },
+  {
+   "id": "m1_mast_hint",
+   "speaker": "malik",
+   "text": "See that radio mast? It's their only link to the valley. Take it down and nobody hears them call for help."
+  },
+  {
+   "id": "m1_c4_set",
+   "speaker": "kade",
+   "text": "Charge set. Moving clear."
+  },
+  {
+   "id": "m1_mast_down",
+   "speaker": "kade",
+   "text": "Mast is down."
+  },
+  {
+   "id": "m1_mast_ok",
+   "speaker": "malik",
+   "text": "Good. They're deaf now. Find the commander's office. The laptop should be inside."
+  },
+  {
+   "id": "m1_laptop",
+   "speaker": "kade",
+   "text": "Got the laptop. There's a file here called Dead Hand."
+  },
+  {
+   "id": "m1_laptop_2",
+   "speaker": "malik",
+   "text": "Dead Hand? Bring it home, Kade. Raven is inbound to the landing zone, south of the outpost."
+  },
+  {
+   "id": "m1_raven",
+   "speaker": "raven",
+   "text": "Vanguard One, Raven. Wheels down. Get aboard!"
+  },
+  {
+   "id": "m1_end",
+   "speaker": "malik",
+   "text": "Nice work. Let's see what Dead Hand really is."
+  },
+  {
+   "id": "m2_intro_1",
+   "speaker": "raven",
+   "text": "This is as close as I can get you. Good luck, Vanguard."
+  },
+  {
+   "id": "m2_intro_2",
+   "speaker": "malik",
+   "text": "The pass is the only road deeper into the valley. A Red Jackal checkpoint guards it, next to a small village."
+  },
+  {
+   "id": "m2_intro_3",
+   "speaker": "malik",
+   "text": "Knock out their radio antenna first. Then find the gate keycard. The checkpoint commander lives in the village."
+  },
+  {
+   "id": "m2_antenna",
+   "speaker": "kade",
+   "text": "Antenna's down."
+  },
+  {
+   "id": "m2_antenna_ok",
+   "speaker": "malik",
+   "text": "Good. Now the keycard. Try the commander's house."
+  },
+  {
+   "id": "m2_key",
+   "speaker": "kade",
+   "text": "Got the keycard."
+  },
+  {
+   "id": "m2_key_ok",
+   "speaker": "malik",
+   "text": "The gate controls are in the guard booth. Open it up."
+  },
+  {
+   "id": "m2_gate",
+   "speaker": "malik",
+   "text": "Gate's open. Rauf is waiting on the other side."
+  },
+  {
+   "id": "m2_rauf_1",
+   "speaker": "rauf",
+   "text": "Kade! You took your time."
+  },
+  {
+   "id": "m2_rauf_2",
+   "speaker": "kade",
+   "text": "Traffic. What have you got?"
+  },
+  {
+   "id": "m2_rauf_3",
+   "speaker": "rauf",
+   "text": "Dead Hand isn't a code name. It's a warhead. And it's already in this valley."
+  },
+  {
+   "id": "m2_end",
+   "speaker": "malik",
+   "text": "Then we find it. Good work, both of you."
+  },
+  {
+   "id": "m3_intro_1",
+   "speaker": "malik",
+   "text": "That radar on the hill sees every helicopter in the valley. As long as it stands, Raven can't fly."
+  },
+  {
+   "id": "m3_intro_2",
+   "speaker": "malik",
+   "text": "Cameras cover the whole station. Shut them down from the control room, then blow the dish."
+  },
+  {
+   "id": "m3_intro_3",
+   "speaker": "kade",
+   "text": "Cameras first. Understood."
+  },
+  {
+   "id": "m3_cams",
+   "speaker": "kade",
+   "text": "Cameras are off."
+  },
+  {
+   "id": "m3_cams_ok",
+   "speaker": "malik",
+   "text": "Nice. They're blind. Get to the radar dish."
+  },
+  {
+   "id": "m3_c4",
+   "speaker": "kade",
+   "text": "Charges set on the dish. Moving away."
+  },
+  {
+   "id": "m3_radar_down",
+   "speaker": "malik",
+   "text": "Radar's gone! Raven, you're clear to fly."
+  },
+  {
+   "id": "m3_raven",
+   "speaker": "raven",
+   "text": "Coming in hot, Vanguard. Get to the landing pad!"
+  },
+  {
+   "id": "m3_end",
+   "speaker": "malik",
+   "text": "Good work, Kade. The valley is open to us now."
+  },
+  {
+   "id": "g_alarm_kade",
+   "speaker": "kade",
+   "text": "They've seen me."
+  },
+  {
+   "id": "g_alarm_malik",
+   "speaker": "malik",
+   "text": "They've raised the alarm. Expect more of them."
+  },
+  {
+   "id": "g_camera_spot",
+   "speaker": "malik",
+   "text": "Careful, a camera just spotted you!"
+  },
+  {
+   "id": "g_lowhealth",
+   "speaker": "malik",
+   "text": "Kade, you're hurt. Use a medkit."
+  },
+  {
+   "id": "g_reload",
+   "speaker": "kade",
+   "text": "Reloading."
+  },
+  {
+   "id": "g_grenade",
+   "speaker": "kade",
+   "text": "Grenade out!"
+  },
+  {
+   "id": "g_clear",
+   "speaker": "kade",
+   "text": "Area clear."
+  },
+  {
+   "id": "g_failed",
+   "speaker": "malik",
+   "text": "Kade? Kade, respond!"
+  },
+  {
+   "id": "enemy1_intruder",
+   "speaker": "enemy1",
+   "text": "Intruder!"
+  },
+  {
+   "id": "enemy1_overthere",
+   "speaker": "enemy1",
+   "text": "Over there!"
+  },
+  {
+   "id": "enemy1_alarm",
+   "speaker": "enemy1",
+   "text": "Sound the alarm!"
+  },
+  {
+   "id": "enemy1_heard",
+   "speaker": "enemy1",
+   "text": "I heard something."
+  },
+  {
+   "id": "enemy1_nothing",
+   "speaker": "enemy1",
+   "text": "Must have been nothing."
+  },
+  {
+   "id": "enemy1_mandown",
+   "speaker": "enemy1",
+   "text": "Man down!"
+  },
+  {
+   "id": "enemy1_cover",
+   "speaker": "enemy1",
+   "text": "Cover me!"
+  },
+  {
+   "id": "enemy1_reload",
+   "speaker": "enemy1",
+   "text": "Reloading!"
+  },
+  {
+   "id": "enemy1_grenade",
+   "speaker": "enemy1",
+   "text": "Grenade!"
+  },
+  {
+   "id": "enemy1_lost",
+   "speaker": "enemy1",
+   "text": "Where did he go?"
+  },
+  {
+   "id": "enemy2_intruder",
+   "speaker": "enemy2",
+   "text": "Intruder!"
+  },
+  {
+   "id": "enemy2_overthere",
+   "speaker": "enemy2",
+   "text": "Over there!"
+  },
+  {
+   "id": "enemy2_alarm",
+   "speaker": "enemy2",
+   "text": "Sound the alarm!"
+  },
+  {
+   "id": "enemy2_heard",
+   "speaker": "enemy2",
+   "text": "I heard something."
+  },
+  {
+   "id": "enemy2_nothing",
+   "speaker": "enemy2",
+   "text": "Must have been nothing."
+  },
+  {
+   "id": "enemy2_mandown",
+   "speaker": "enemy2",
+   "text": "Man down!"
+  },
+  {
+   "id": "enemy2_cover",
+   "speaker": "enemy2",
+   "text": "Cover me!"
+  },
+  {
+   "id": "enemy2_reload",
+   "speaker": "enemy2",
+   "text": "Reloading!"
+  },
+  {
+   "id": "enemy2_grenade",
+   "speaker": "enemy2",
+   "text": "Grenade!"
+  },
+  {
+   "id": "enemy2_lost",
+   "speaker": "enemy2",
+   "text": "Where did he go?"
+  }
+ ]
+}
