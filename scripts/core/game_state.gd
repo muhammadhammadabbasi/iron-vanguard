@@ -8,9 +8,9 @@ const QUALITY_NAMES := ["LOW", "MEDIUM", "HIGH"]
 const SETTINGS_PATH := "user://settings.cfg"
 
 const MISSIONS := [
-	{"id": 1, "name": "HIGH DROP", "script": "res://scripts/missions/m01_high_drop.gd",
+	{"id": 1, "name": "BLACKOUT", "script": "res://scripts/missions/m01_blackout.gd",
 		"place": "Red Jackal fuel outpost, Karsa Valley", "time": "0540 HRS",
-		"brief": "Parachute from the C-130 over the Karsa Valley. Infiltrate the Red Jackal fuel outpost, destroy its radio mast so they cannot call for help, and recover the commander's laptop. Raven will extract you by helicopter."},
+		"brief": "Parachute from a C-130 at dawn over Karsa Valley. Infiltrate the Red Jackal fuel outpost, destroy its radio mast so they cannot call for help, and recover the commander's laptop. Raven will extract you by helicopter."},
 	{"id": 2, "name": "SILENT PASS", "script": "res://scripts/missions/m02_silent_pass.gd",
 		"place": "Border checkpoint, Karsa Pass", "time": "1310 HRS",
 		"brief": "The only road deeper into the valley runs through a Red Jackal checkpoint beside a mountain village. Destroy the checkpoint's radio antenna, take the gate keycard from the commander's house, open the gate and meet Lt. Rauf on the other side."},
@@ -24,7 +24,7 @@ var sensitivity := 0.3
 var fullscreen := true
 var quality := 1
 var volume := 0.9
-var unlocked := 1
+var unlocked := 3
 var current_mission := 1
 var skip_menu := false
 
@@ -121,7 +121,7 @@ func _load() -> void:
 	fullscreen = bool(cf.get_value("game", "fullscreen", true))
 	quality = clampi(int(cf.get_value("game", "quality", 1)), 0, 2)
 	volume = clampf(float(cf.get_value("game", "volume", 0.9)), 0.0, 1.0)
-	unlocked = clampi(int(cf.get_value("progress", "unlocked", 1)), 1, MISSIONS.size())
+	unlocked = clampi(int(cf.get_value("progress", "unlocked", 3)), 3, MISSIONS.size())
 
 
 func _input(event: InputEvent) -> void:

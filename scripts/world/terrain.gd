@@ -43,7 +43,7 @@ func height_at(x: float, z: float) -> float:
 	for hl in hills:
 		var d := Vector2(x - hl.pos.x, z - hl.pos.z).length()
 		if d < hl.radius:
-			var k := 1.0 - d / hl.radius
+			var k: float = 1.0 - d / hl.radius
 			h += hl.height * k * k * (3.0 - 2.0 * k)
 	# mountain rim
 	var r := maxf(absf(x), absf(z))
@@ -54,7 +54,7 @@ func height_at(x: float, z: float) -> float:
 	for f in flats:
 		var d2 := Vector2(x - f.pos.x, z - f.pos.z).length()
 		if d2 < f.radius + f.blend:
-			var w := 1.0 if d2 <= f.radius else 1.0 - (d2 - f.radius) / f.blend
+			var w: float = 1.0 if d2 <= f.radius else 1.0 - (d2 - f.radius) / f.blend
 			w = w * w * (3.0 - 2.0 * w)
 			h = lerpf(h, f.height, w)
 	return h
@@ -152,9 +152,10 @@ func add_road(points: Array, width: float, tex_id := "asphalt_02", uv_scale := 0
 			pts.append(a.lerp(b, float(s) / steps))
 	pts.append(points[points.size() - 1])
 	var dist := 0.0
+	var src := pts.duplicate()
 	for i in pts.size():
-		var p: Vector3 = pts[i]
-		var dir: Vector3 = (pts[mini(i + 1, pts.size() - 1)] - pts[maxi(i - 1, 0)])
+		var p: Vector3 = src[i]
+		var dir: Vector3 = (src[mini(i + 1, src.size() - 1)] - src[maxi(i - 1, 0)])
 		dir.y = 0
 		dir = dir.normalized()
 		var side := Vector3(-dir.z, 0, dir.x) * width * 0.5
@@ -163,7 +164,7 @@ func add_road(points: Array, width: float, tex_id := "asphalt_02", uv_scale := 0
 		l.y = height_at(l.x, l.z) + 0.06
 		r.y = height_at(r.x, r.z) + 0.06
 		if i > 0:
-			dist += p.distance_to(pts[i - 1])
+			dist += p.distance_to(src[i - 1])
 		pts[i] = [l, r, dist]
 	for i in pts.size() - 1:
 		var p0: Array = pts[i]
