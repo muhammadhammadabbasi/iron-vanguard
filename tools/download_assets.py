@@ -15,6 +15,7 @@ import json
 import os
 import re
 import sys
+import urllib.parse
 import urllib.request
 import zipfile
 
@@ -62,14 +63,64 @@ def read_list(name):
 
 # ------------------------------------------------------------------ Sketchfab
 
+ALLOWED_LICENSES = ("CC Attribution", "CC0 Public Domain")
+
+
+def sf_license_ok(info):
+    lab = (info.get("license") or {}).get("label", "")
+    return lab in ALLOWED_LICENSES
+
+
+def sf_search(query, max_faces):
+    """Best-liked downloadable CC0 / CC-BY model for a search query."""
+    q = urllib.parse.urlencode({
+        "type": "models", "q": query, "downloadable": "true", "sort_by": "-likeCount",
+        "max_face_count": max_faces, "count": 24,
+    })
+    res = get(f"https://api.sketchfab.com/v3/search?{q}").get("results", [])
+    for r in res:
+        lab = (r.get("license") or {}).get("label", "") if isinstance(r.get("license"), dict) else ""
+        if lab and lab not in ALLOWED_LICENSES:
+            continue
+        info = get(f"https://api.sketchfab.com/v3/models/{r['uid']}")
+        if sf_license_ok(info):
+            return r["uid"], info
+    return None, None
+
+
 def sketchfab():
-    urls = read_list("sketchfab_list.txt")
-    if not urls:
+    lines = read_list("sketchfab_list.txt")
+    if not lines:
         print("Sketchfab: list is empty")
         return
     token = os.environ.get("SKETCHFAB_TOKEN", "").strip()
     if not token:
-        print("Sketchfab: SKETCHFAB_TOKEN secret is not set - skipping")
+        print("Sketchfab: SKETCHFAB_TOKEN secret is not set - showing what WOULD be downloaded:")
+    urls = []
+    for line in lines:
+        if line.lower().startswith("search "):
+            body = line[7:]
+            max_faces = 60000
+            if "|" in body:
+                body, opt = body.split("|", 1)
+                m2 = re.search(r"(\d+)", opt)
+                if m2:
+                    max_faces = int(m2.group(1))
+            try:
+                uid, info = sf_search(body.strip(), max_faces)
+            except Exception as e:
+                print(f"Sketchfab: search '{body.strip()}' failed: {e}")
+                continue
+            if not uid:
+                print(f"Sketchfab: search '{body.strip()}' found no CC0/CC-BY downloadable model")
+                continue
+            print(f"Sketchfab: search '{body.strip()}' -> {info.get('name')} by "
+                  f"{(info.get('user') or {}).get('displayName')} ({(info.get('license') or {}).get('label')}, "
+                  f"{info.get('faceCount')} faces) https://sketchfab.com/3d-models/{uid}")
+            urls.append(uid)
+        else:
+            urls.append(line)
+    if not token:
         return
     credits_path = os.path.join(ROOT, "CREDITS.md")
     credits = open(credits_path, encoding="utf-8").read() if os.path.exists(credits_path) else "# Credits\n\n"
@@ -81,6 +132,9 @@ def sketchfab():
         uid = m.group(1)
         try:
             info = get(f"https://api.sketchfab.com/v3/models/{uid}")
+            if not sf_license_ok(info):
+                print(f"Sketchfab: skipping '{info.get('name')}' - licence is {(info.get('license') or {}).get('label')}")
+                continue
             name = info.get("name", uid)
             folder = os.path.join(ASSETS, "sketchfab", f"{slug(name)}_{uid[:6]}")
             if os.path.isdir(folder) and os.listdir(folder):

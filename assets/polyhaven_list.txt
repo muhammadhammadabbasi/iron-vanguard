@@ -28,9 +28,9 @@ hdri overcast
 hdri night
 # --- props ---
 model barrel
-model crate
-model pallet
+# (crates come from Sketchfab)
+
 model table
-model chair
-model shelf
+model wooden chair
+model metal shelf
 model rock
