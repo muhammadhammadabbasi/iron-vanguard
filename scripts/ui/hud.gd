@@ -596,6 +596,8 @@ func _update_marker() -> void:
 	var cam: Camera3D = player.cam
 	var vp := root.get_viewport_rect().size
 	var wp: Vector3 = marker_pos
+	if absf((wp - cam.global_position).dot(-cam.global_transform.basis.z)) < 0.05:
+		return
 	var sp := cam.unproject_position(wp)
 	if cam.is_position_behind(wp):
 		sp = Vector2(vp.x - sp.x, vp.y - 60.0)
