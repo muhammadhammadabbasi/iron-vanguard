@@ -25,7 +25,7 @@ var smoke: Node
 func _build_level() -> void:
 	map_center = Vector3(-20, 0, 20)
 	map_size = 300.0
-	atmosphere("belfast_sunset_puresky", Vector3(-11, 65, 0), Color(1.0, 0.72, 0.5), 1.55, Color(0.62, 0.5, 0.44), 0.0035, 1.0, 1.05)
+	atmosphere("belfast_sunset_puresky", Vector3(-11, 65, 0), Color(1.0, 0.72, 0.5), 1.55, Color(0.62, 0.52, 0.48), 0.0013, 1.0, 0.88)
 	make_terrain({
 		"size": 460.0, "amplitude": 8.0, "rim_start": 170.0, "rim_height": 70.0, "seed_value": 11,
 		"layer_low": "forrest_ground_01", "layer_mid": "dirt", "layer_rock": "rocky_terrain_02",
@@ -45,7 +45,6 @@ func _build_level() -> void:
 	_outpost()
 	scatter("pine", 170, Vector3(-20, 0, 20), 200.0, [[Vector3.ZERO, 58.0], [LZ, 22.0], [DZ, 24.0], [Vector3(0, 0, 70), 8.0], [Vector3(8, 0, 110), 8.0]], 0.0, "trunk", Vector2(0.75, 1.25))
 	scatter("rocks", 40, Vector3(-20, 0, 20), 190.0, [[Vector3.ZERO, 55.0], [LZ, 18.0], [DZ, 18.0]], 0.0, "none", Vector2(0.6, 1.8))
-	scatter("dead_trees", 10, Vector3(-60, 0, 40), 80.0, [[DZ, 20.0], [Vector3.ZERO, 55.0]], 0.0, "none")
 	_enemies()
 
 

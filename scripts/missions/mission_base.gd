@@ -139,11 +139,11 @@ func atmosphere(hdri: String, sun_rot: Vector3, sun_color: Color, sun_energy: fl
 	env.fog_enabled = true
 	env.fog_light_color = fog_color
 	env.fog_density = fog_density
-	env.fog_sky_affect = 0.25
-	env.fog_aerial_perspective = 0.4
+	env.fog_sky_affect = 0.12
+	env.fog_aerial_perspective = 0.55
 	env.adjustment_enabled = true
-	env.adjustment_contrast = 1.06
-	env.adjustment_saturation = 1.0
+	env.adjustment_contrast = 1.12
+	env.adjustment_saturation = 1.08
 	env.ssao_radius = 1.2
 	env.ssao_intensity = 1.6
 	var we := WorldEnvironment.new()
@@ -168,6 +168,14 @@ func make_terrain(cfg: Dictionary) -> void:
 		terrain.set(k, cfg[k])
 	nav.add_child(terrain)
 	terrain.setup()
+	var far := MeshInstance3D.new()
+	var pm := PlaneMesh.new()
+	pm.size = Vector2(9000, 9000)
+	far.mesh = pm
+	far.material_override = Fx.pbr(cfg.get("layer_low", "forrest_ground_01"), 0.02, Color(0.8, 0.8, 0.8))
+	far.position.y = terrain.rim_height * 0.55
+	far.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(far)
 
 
 func h(x: float, z: float) -> float:
@@ -241,7 +249,7 @@ func house(center: Vector3, size: Vector3, openings: Array, wall_tex := "painted
 	var base_y := h(center.x, center.z)
 	root.position = Vector3(center.x, base_y, center.z)
 	root.rotation.y = yaw
-	var wall := Fx.pbr(wall_tex, 0.45)
+	var wall := Fx.pbr(wall_tex, 0.45, Color(0.82, 0.78, 0.72) if wall_tex == "painted_plaster_wall" else Color.WHITE)
 	var floor_mat := Fx.pbr("concrete_floor_worn_001", 0.35)
 	var hh := size.y
 	for side in ["n", "s", "e", "w"]:
@@ -299,8 +307,8 @@ func house(center: Vector3, size: Vector3, openings: Array, wall_tex := "painted
 		Geo.mesh_box(root, Vector3(size.x + 0.5, 0.45, 0.25), Vector3(0, hh + 0.3, -size.z / 2.0 - 0.1), wall)
 	var l := OmniLight3D.new()
 	l.light_color = Color(1.0, 0.82, 0.6)
-	l.light_energy = 1.1
-	l.omni_range = maxf(size.x, size.z) * 0.8
+	l.light_energy = 0.7
+	l.omni_range = maxf(size.x, size.z) * 0.75
 	l.position = Vector3(0, hh - 0.4, 0)
 	root.add_child(l)
 	Geo.mesh_sphere(root, 0.08, Vector3(0, hh - 0.3, 0), Fx.mats["lamp"], Vector3.ONE, 8)

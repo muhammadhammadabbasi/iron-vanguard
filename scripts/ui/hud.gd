@@ -267,7 +267,7 @@ func setup(p, m) -> void:
 	alarm_lbl.visible = false
 	root.add_child(alarm_lbl)
 	alt_lbl = UI.label("", 22, Color(0.9, 0.95, 1.0), true, UI.heavy_font(3, 0.5))
-	UI.place(alt_lbl, Control.PRESET_CENTER, -400, 120, 400, 190)
+	UI.place(alt_lbl, Control.PRESET_CENTER_TOP, -400, 130, 400, 200)
 	alt_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	root.add_child(alt_lbl)
 	for i in 2:
@@ -437,7 +437,7 @@ func _build_map() -> void:
 	tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	tr.stretch_mode = TextureRect.STRETCH_SCALE
 	UI.full_rect(tr)
-	tr.modulate = Color(0.75, 0.85, 0.75)
+	tr.modulate = Color(0.9, 0.95, 0.9)
 	holder.add_child(tr)
 	map_overlay = MapOverlay.new()
 	map_overlay.hud = self
@@ -578,6 +578,13 @@ func _refresh_map() -> void:
 	map_cam.size = mission.map_size
 	map_cam.global_position = mission.map_center + Vector3(0, 600, 0)
 	map_cam.rotation = Vector3(-PI / 2.0, 0, 0)
+	if mission.env != null and map_cam.environment == null:
+		var e: Environment = mission.env.duplicate()
+		e.fog_enabled = false
+		e.glow_enabled = false
+		e.ssao_enabled = false
+		e.tonemap_exposure = 1.0
+		map_cam.environment = e
 	map_cam.current = true
 	map_view.render_target_update_mode = SubViewport.UPDATE_ONCE
 

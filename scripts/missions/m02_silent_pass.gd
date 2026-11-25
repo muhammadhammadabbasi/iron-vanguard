@@ -22,7 +22,7 @@ var walls: Array = []
 func _build_level() -> void:
 	map_center = Vector3(0, 0, 40)
 	map_size = 280.0
-	atmosphere("kloofendal_48d_partly_cloudy_puresky", Vector3(-52, 35, 0), Color(1.0, 0.95, 0.88), 1.6, Color(0.72, 0.78, 0.85), 0.0025, 1.0, 0.95)
+	atmosphere("kloofendal_48d_partly_cloudy_puresky", Vector3(-52, 35, 0), Color(1.0, 0.95, 0.88), 1.6, Color(0.72, 0.78, 0.85), 0.0011, 1.0, 0.85)
 	make_terrain({
 		"size": 440.0, "amplitude": 4.0, "rim_start": 150.0, "rim_height": 80.0, "seed_value": 22,
 		"layer_low": "dirt", "layer_mid": "gravel", "layer_rock": "rocky_terrain_02", "layer_high": "snow_02", "snow_line": 48.0,

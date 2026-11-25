@@ -18,7 +18,7 @@ var drop_heli
 func _build_level() -> void:
 	map_center = Vector3(0, 0, 40)
 	map_size = 280.0
-	atmosphere("belfast_sunset_puresky", Vector3(-6, -110, 0), Color(1.0, 0.62, 0.42), 1.4, Color(0.55, 0.45, 0.45), 0.004, 0.9, 1.05)
+	atmosphere("belfast_sunset_puresky", Vector3(-6, -110, 0), Color(1.0, 0.62, 0.42), 1.4, Color(0.55, 0.46, 0.46), 0.0016, 0.9, 0.9)
 	make_terrain({
 		"size": 440.0, "amplitude": 5.0, "rim_start": 170.0, "rim_height": 55.0, "seed_value": 33,
 		"layer_low": "forrest_ground_01", "layer_mid": "dirt", "layer_rock": "rocky_terrain_02",

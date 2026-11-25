@@ -505,7 +505,7 @@ func open_chute() -> void:
 	if Models.has("parachute"):
 		chute = Models.make("parachute", false)
 		add_child(chute)
-		chute.position = Vector3(0, 6.5, 0.5)
+		chute.position = Vector3(0, 6.2, -1.6)
 	chute_speed = 9.0
 
 

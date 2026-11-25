@@ -77,6 +77,7 @@ func _ready() -> void:
 	model = Models.character("swat")
 	model.rotation.y = PI   # Mixamo characters face +Z; our soldiers face -Z
 	add_child(model)
+	_militia_tint(model)
 	skel = model.get_node_or_null(Models.skeleton_path("swat"))
 	ap = AnimationPlayer.new()
 	model.add_child(ap)
@@ -90,6 +91,23 @@ func _ready() -> void:
 	home = global_position
 	home_yaw = rotation.y
 	last_known = global_position
+
+
+static var _tinted := {}
+
+
+## Re-colour the SWAT uniform into Red Jackal militia olive/khaki (keeps all texture detail).
+func _militia_tint(n: Node) -> void:
+	for mi in n.find_children("*", "MeshInstance3D", true, false):
+		for i in mi.mesh.get_surface_count():
+			var src = mi.get_active_material(i)
+			if not (src is BaseMaterial3D):
+				continue
+			if not _tinted.has(src):
+				var m: BaseMaterial3D = src.duplicate()
+				m.albedo_color = m.albedo_color * Color(0.78, 0.74, 0.52)
+				_tinted[src] = m
+			mi.set_surface_override_material(i, _tinted[src])
 
 
 func _attach_gun() -> void:
