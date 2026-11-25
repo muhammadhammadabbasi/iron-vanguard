@@ -10,7 +10,7 @@
 # --- weapons ---
 search ak47 low poly | max 15000
 search m4a1 rifle low poly | max 15000
-search pistol silencer low poly | max 10000
+search beretta m9 low poly | max 10000
 search mp5 low poly | max 15000
 search sniper rifle svd | max 20000
 search combat knife low poly | max 5000
@@ -33,3 +33,30 @@ search ammo box | max 8000
 search army truck | max 40000
 search military jeep low poly | max 40000
 search transport helicopter low poly | max 50000
+search black hawk helicopter | max 70000
+search c130 hercules | max 70000
+search parachute | max 20000
+
+# --- houses / locations ---
+search middle east house | max 40000
+search abandoned house | max 50000
+search old warehouse | max 50000
+search guard booth | max 10000
+search military tent | max 20000
+search shipping container | max 8000
+search fuel tank industrial | max 20000
+search radio antenna tower | max 20000
+search street lamp | max 5000
+search pine tree | max 8000
+search dead tree | max 8000
+search rock cliff | max 20000
+
+# --- gameplay props ---
+search security camera | max 5000
+search alarm siren | max 5000
+search medkit | max 5000
+search laptop | max 5000
+search office desk | max 8000
+search keycard | max 3000
+search c4 explosive | max 5000
+search binoculars | max 8000
