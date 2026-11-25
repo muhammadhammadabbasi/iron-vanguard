@@ -1,0 +1,57 @@
+name: Build Windows installer
+
+# Push a version tag (for example v0.2.0) to build the game and publish the installer on the Releases page.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GODOT_VERSION: 4.5.1-stable
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Godot + Windows export templates
+        run: |
+          set -e
+          mkdir -p ~/godot && cd ~/godot
+          curl -sSL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip"
+          unzip -q godot.zip && mv Godot_v${GODOT_VERSION}_linux.x86_64 godot
+          curl -sSL -o templates.tpz "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz"
+          T=~/.local/share/godot/export_templates/${GODOT_VERSION/-/.}
+          mkdir -p "$T"
+          unzip -joq templates.tpz 'templates/version.txt' 'templates/windows_release_x86_64.exe' 'templates/windows_debug_x86_64.exe' -d "$T"
+          rm templates.tpz
+          sudo apt-get update -qq && sudo apt-get install -y -qq nsis
+
+      - name: Import assets
+        run: timeout 1800 ~/godot/godot --headless --import || true
+
+      - name: Export Windows build
+        run: |
+          mkdir -p build
+          ~/godot/godot --headless --export-release "Windows Desktop" "$PWD/build/IronVanguard.exe"
+          ls -la build
+
+      - name: Build installer
+        run: |
+          cp build/IronVanguard.exe build/IronVanguard.pck tools/installer/
+          cd tools/installer && makensis -V2 installer.nsi && ls -la *.exe
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          if [ "${GITHUB_REF_TYPE}" != "tag" ]; then TAG="build-${GITHUB_RUN_NUMBER}"; fi
+          gh release create "$TAG" tools/installer/IronVanguard_Setup_*.exe \
+            --title "Iron Vanguard $TAG" \
+            --notes "Windows installer. Run the setup, then launch Iron Vanguard from the desktop shortcut. If Windows SmartScreen appears: More info -> Run anyway." \
+            || gh release upload "$TAG" tools/installer/IronVanguard_Setup_*.exe --clobber
