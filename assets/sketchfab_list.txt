@@ -1,0 +1,13 @@
+# Paste Sketchfab model links here, one per line, then commit.
+# The "Download assets" GitHub Action downloads them automatically into assets/sketchfab/
+# and writes the author credit into CREDITS.md.
+#
+# Only use models marked "Downloadable" with licence CC0 or CC Attribution (CC BY).
+# Example line:
+# https://sketchfab.com/3d-models/watchtower-0123456789abcdef0123456789abcdef
+#
+# --- weapons ---
+
+# --- buildings ---
+
+# --- vehicles ---

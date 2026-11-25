@@ -1,0 +1,44 @@
+name: Download assets
+
+# Runs when the asset lists change, or manually from the Actions tab ("Run workflow").
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "assets/sketchfab_list.txt"
+      - "assets/polyhaven_list.txt"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: download-assets
+  cancel-in-progress: false
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Download from Poly Haven and Sketchfab
+        env:
+          SKETCHFAB_TOKEN: ${{ secrets.SKETCHFAB_TOKEN }}
+        run: python tools/download_assets.py all
+
+      - name: Commit new assets
+        run: |
+          git config user.name "asset-bot"
+          git config user.email "asset-bot@users.noreply.github.com"
+          git add -A assets CREDITS.md
+          if git diff --cached --quiet; then
+            echo "Nothing new to commit"
+          else
+            git commit -m "Add downloaded assets"
+            git pull --rebase
+            git push
+          fi

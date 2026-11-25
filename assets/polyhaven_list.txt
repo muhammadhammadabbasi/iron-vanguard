@@ -1,0 +1,36 @@
+# Poly Haven assets (CC0 - free, no credit needed). Downloaded automatically at 2K.
+# Format:  texture|hdri|model  <exact id, or keywords>
+# Keywords pick the most popular match, e.g. "texture concrete wall".
+
+# --- ground ---
+texture rocky terrain
+texture dirt
+texture gravel
+texture dry grass
+texture snow
+texture forest ground
+# --- roads / floors ---
+texture asphalt
+texture concrete floor
+texture metal grate
+texture wood floor
+# --- walls ---
+texture concrete wall
+texture plaster
+texture brick wall
+texture corrugated
+texture rusty metal
+texture painted metal
+# --- skies ---
+hdri partly cloudy
+hdri sunset
+hdri overcast
+hdri night
+# --- props ---
+model barrel
+model crate
+model pallet
+model table
+model chair
+model shelf
+model rock
