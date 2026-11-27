@@ -6,7 +6,7 @@
    "length_scale": 1.0
   },
   "malik": {
-   "model": "en_US-lessac-high",
+   "model": "en_US-hfc_male-medium",
    "radio": true,
    "length_scale": 1.0
   },
