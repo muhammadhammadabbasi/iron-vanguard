@@ -22,6 +22,7 @@ var nav: NavigationRegion3D
 var terrain
 var alarm
 var env: Environment
+var base_fog := 0.001
 var sun: DirectionalLight3D
 var rng := RandomNumberGenerator.new()
 
@@ -102,6 +103,7 @@ func _process(delta: float) -> void:
 	_dialogue(delta)
 	_step(delta)
 	_safety_net()
+	_air_clarity()
 	if player != null and not player.dead:
 		if player.hp < 35.0 and player.medkits > 0 and not low_health_said:
 			low_health_said = true
@@ -111,6 +113,20 @@ func _process(delta: float) -> void:
 
 
 ## Never let the player fall through the world: if he ends up under the terrain, put him back on top.
+## High in the air (plane, freefall, canopy) the valley should look crisp, not milky:
+## thin the fog and aerial haze with the camera's height above the ground.
+func _air_clarity() -> void:
+	if env == null or terrain == null:
+		return
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		return
+	var p := cam.global_position
+	var k := clampf((p.y - h(p.x, p.z) - 40.0) / 300.0, 0.0, 1.0)
+	env.fog_density = lerpf(base_fog, base_fog * 0.12, k)
+	env.fog_aerial_perspective = lerpf(0.55, 0.15, k)
+
+
 func _safety_net() -> void:
 	if player == null or terrain == null or player.mode == 3:
 		return
@@ -153,6 +169,7 @@ func atmosphere(hdri: String, sun_rot: Vector3, sun_color: Color, sun_energy: fl
 	env.fog_enabled = true
 	env.fog_light_color = fog_color
 	env.fog_density = fog_density
+	base_fog = fog_density
 	env.fog_sky_affect = 0.12
 	env.fog_aerial_perspective = 0.55
 	env.adjustment_enabled = true

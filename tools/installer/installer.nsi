@@ -4,7 +4,7 @@ Unicode True
 
 !define APPNAME "Iron Vanguard"
 !define APPKEY "IronVanguard"
-!define VERSION "0.2.0"
+!define VERSION "0.3.0"
 !define EXE "IronVanguard.exe"
 
 Name "${APPNAME}"
@@ -15,7 +15,7 @@ RequestExecutionLevel admin
 SetCompressor /SOLID lzma
 BrandingText "${APPNAME} ${VERSION}"
 
-VIProductVersion "0.2.0.0"
+VIProductVersion "0.3.0.0"
 VIAddVersionKey "ProductName" "${APPNAME}"
 VIAddVersionKey "FileDescription" "${APPNAME} Setup"
 VIAddVersionKey "FileVersion" "${VERSION}"
