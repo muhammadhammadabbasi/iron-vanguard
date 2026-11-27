@@ -165,11 +165,21 @@ func _combat_checks(p, ms, look_from: Vector3) -> void:
 
 func _m1(p, ms) -> void:
 	await _wait(3.0)
-	await _shot("plane")
+	await _shot("plane_bay")
+	_check(ms.kade_npc.visible and ms.bay.visible, "Kade visible in the cargo bay")
+	await _wait(4.0)
+	await _shot("plane_outside")
+	var pa: Vector3 = ms.plane.global_position
+	_check(absf(pa.x - ms.DZ.x) < 260.0 and absf(pa.z - ms.DZ.z) < 260.0, "plane circles over the map")
 	ms._jump()
-	await _wait(2.5)
+	await _wait(1.2)
+	await _shot("kade_runs")
+	await _wait(1.8)
 	_check(p.mode == 1, "freefall after jump")
+	await _wait(1.0)
 	await _shot("freefall")
+	var fp: Vector3 = p.global_position
+	_check(absf(fp.x) < 440.0 and absf(fp.z) < 440.0, "jump point is inside the map")
 	p.global_position = ms.ground(ms.DZ) + Vector3(0, 120, 30)
 	p.velocity = Vector3(0, -40, 0)
 	await _wait(0.5)
@@ -181,6 +191,13 @@ func _m1(p, ms) -> void:
 	_check(await _wait_until(func(): return p.mode == 0, 40.0), "landed with parachute")
 	await _wait(1.0)
 	_check(ms.step == 2, "step 2 after landing")
+	await _wait(2.0)
+	_check(p.global_position.y > ms.h(p.global_position.x, p.global_position.z) - 0.5, "stays on the ground after landing")
+	# a long fall anywhere on the map must stop on the terrain
+	p.global_position = ms.ground(Vector3(150, 0, -200)) + Vector3(0, 40, 0)
+	p.velocity = Vector3.ZERO
+	await _wait(4.0)
+	_check(absf(p.global_position.y - ms.h(p.global_position.x, p.global_position.z)) < 2.5, "terrain collision catches a fall far from base")
 	await _stand(p, ms.ground(Vector3(-60, 0, 50)), ms.ground(Vector3(-10, 0, 10)) + Vector3.UP * 3.0)
 	await _wait(1.0)
 	await _shot("outpost")
@@ -214,6 +231,8 @@ func _m2(p, ms) -> void:
 	await _wait(6.0)
 	await _shot("insertion")
 	_check(await _wait_until(func(): return ms.step == 1, 30.0), "inserted by helicopter")
+	var ap: Vector3 = ms.antenna_node.global_position
+	_check(absf(ap.y - ms.h(ap.x, ap.z)) < 1.0, "antenna tower stands on the ground (dy %.2f)" % (ap.y - ms.h(ap.x, ap.z)))
 	await _wait(1.0)
 	await _stand(p, ms.ground(Vector3(0, 0, 96)), ms.ground(Vector3(0, 0, 40)) + Vector3.UP * 3.0)
 	await _shot("village")
@@ -240,7 +259,21 @@ func _m2(p, ms) -> void:
 	_check(await _wait_until(func(): return ms.done, 40.0), "mission 2 complete")
 
 
+func _max_slope(ms, a: Vector3, b: Vector3) -> float:
+	var worst := 0.0
+	var n := int(a.distance_to(b) / 2.0)
+	for i in n:
+		var p0 := a.lerp(b, float(i) / n)
+		var p1 := a.lerp(b, float(i + 1) / n)
+		var dh := absf(ms.h(p1.x, p1.z) - ms.h(p0.x, p0.z))
+		worst = maxf(worst, rad_to_deg(atan2(dh, Vector2(p1.x - p0.x, p1.z - p0.z).length())))
+	return worst
+
+
 func _m3(p, ms) -> void:
+	for d in [Vector3(0, 0, 1), Vector3(1, 0, 0), Vector3(-1, 0, 0), Vector3(0, 0, -1), Vector3(0.7, 0, 0.7)]:
+		var sl := _max_slope(ms, d * 200.0, Vector3.ZERO)
+		_check(sl < 30.0, "hill climbable from %s (max slope %.0f deg)" % [d, sl])
 	await _wait(2.0)
 	await _shot("start")
 	await _stand(p, ms.ground(Vector3(20, 0, 70)), ms.ground(Vector3(0, 0, 0)) + Vector3.UP * 6.0)

@@ -16,11 +16,11 @@ const PH := "res://assets/polyhaven/models/"
 ## anchor = "bottom" (feet on y=0, centred in xz) or "center"
 const DEFS := {
 	# --- weapons (muzzle along +X in the source files) ---
-	"m4": {"path": SF + "low_poly_m4a1_8cab1c/low_poly_m4a1.glb", "size": 0.84, "axis": "length", "anchor": "center"},
-	"ak": {"path": SF + "low_poly_akm_849b7c/low_poly_akm.glb", "size": 0.88, "axis": "length", "anchor": "center"},
-	"svd": {"path": SF + "low_poly_svd_dragunov_fe40c5/low_poly_svd_dragunov.glb", "size": 1.22, "axis": "length", "anchor": "center"},
-	"m9": {"path": SF + "beretta_pistol_f4dd70/beretta_pistol.glb", "size": 0.217, "axis": "length", "anchor": "center"},
-	"knife": {"path": SF + "combat_knife_48e00d/combat_knife.glb", "size": 0.30, "axis": "length", "anchor": "center"},
+	"m4": {"path": SF + "low_poly_m4a1_8cab1c/low_poly_m4a1.glb", "size": 0.84, "axis": "length", "anchor": "center", "fwd": -PI / 2.0},
+	"ak": {"path": SF + "low_poly_akm_849b7c/low_poly_akm.glb", "size": 0.88, "axis": "length", "anchor": "center", "fwd": -PI / 2.0},
+	"svd": {"path": SF + "low_poly_svd_dragunov_fe40c5/low_poly_svd_dragunov.glb", "size": 1.22, "axis": "length", "anchor": "center", "fwd": -PI / 2.0},
+	"m9": {"path": SF + "beretta_pistol_f4dd70/beretta_pistol.glb", "size": 0.217, "axis": "length", "anchor": "center", "fwd": -PI / 2.0},
+	"knife": {"path": SF + "combat_knife_48e00d/combat_knife.glb", "size": 0.30, "axis": "length", "anchor": "center", "fwd": -PI / 2.0},
 	"grenade": {"path": SF + "grenade_m67_happy_or_sad_grunge_pass_dcfc56/grenade_m67_happy_or_sad_grunge_pass.glb", "size": 0.09, "axis": "height", "anchor": "center", "tint": Color(0.22, 0.25, 0.16)},
 	"binoculars": {"path": SF + "binoculars_8_ussr_1935_063c8a/binoculars_8_ussr_1935.glb", "size": 0.18, "axis": "length", "anchor": "center"},
 	"c4": {"path": SF + "simple_old_c4_43d3b6/simple_old_c4.glb", "size": 0.22, "axis": "max", "anchor": "bottom"},
@@ -80,8 +80,10 @@ const ANIMS := {
 	"freefall": ["Ch15_nonPBR@Treading Water.fbx", true],
 	"swim": ["Ch15_nonPBR@Swimming.fbx", true],
 	"walk_back": ["Ch15_nonPBR@Backwards Rifle Walk.fbx", true],
+	"typing": ["Ch18_nonPBR@Typing.fbx", true],
 }
 const CHARACTERS := {
+	"malik": {"path": "res://assets/characters/malik/malik_ch18.fbx", "skel": "Skeleton3D"},
 	"swat": {"path": "res://assets/characters/enemy/enemy_swat.fbx", "skel": "Skeleton3D"},
 	"kade": {"path": "res://assets/characters/player/player_ch15.glb", "skel": "Skeleton3D"},
 }
@@ -207,6 +209,16 @@ func make(id: String, shadows := true) -> Node3D:
 			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		root.add_child(mi)
 	return root
+
+
+## Weapon with its muzzle (or blade) pointing along -Z and its centre at the origin.
+func weapon(id: String, shadows := false) -> Node3D:
+	var holder := Node3D.new()
+	holder.name = id
+	var m := make(id, shadows)
+	m.rotation.y = DEFS.get(id, {}).get("fwd", 0.0)
+	holder.add_child(m)
+	return holder
 
 
 ## Instance with collision. collide: "box" (one box around the model), "trimesh" (exact), "none".

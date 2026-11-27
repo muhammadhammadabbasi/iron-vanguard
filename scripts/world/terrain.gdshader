@@ -16,6 +16,8 @@ uniform float snow_line = 999.0;
 uniform vec4 tint : source_color = vec4(1.0);
 uniform float scale_low = 0.22;
 uniform float scale_rock = 0.09;
+uniform vec4 patch_a : source_color = vec4(0.55, 0.62, 0.35, 1.0);
+uniform vec4 patch_b : source_color = vec4(0.28, 0.33, 0.20, 1.0);
 
 varying vec3 wpos;
 varying vec3 wnrm;
@@ -51,6 +53,13 @@ void fragment() {
 	col = mix(col, rock, m_rock);
 	col = mix(col, texture(alb_high, uv).rgb, m_high);
 	col *= mix(0.85, 1.1, big);
+	// landscape-scale colour patches: fields, forest floor, dry ground (what you see from the air)
+	float pn = vnoise(wpos.xz * 0.006) * 0.6 + vnoise(wpos.xz * 0.019) * 0.4;
+	vec3 patch_col = mix(patch_b.rgb, patch_a.rgb, smoothstep(0.3, 0.7, pn));
+	float dist = length(wpos - CAMERA_POSITION_WORLD);
+	float far_k = smoothstep(60.0, 420.0, dist) * (1.0 - m_rock * 0.6) * (1.0 - m_high);
+	vec3 macro = col * mix(vec3(1.0), patch_col / max(dot(patch_col, vec3(0.333)), 0.05) * 0.45, 0.55);
+	col = mix(col, mix(macro, patch_col, 0.45), far_k);
 	ALBEDO = col * tint.rgb;
 	vec3 n_low = mix(texture(nrm_low, uv).rgb, texture(nrm_mid, uv).rgb, m_mid);
 	vec3 n = mix(n_low, texture(nrm_rock, wpos.xz * scale_rock).rgb, m_rock);

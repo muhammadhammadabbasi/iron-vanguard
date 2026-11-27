@@ -133,8 +133,7 @@ func _attach_gun() -> void:
 	gun = Node3D.new()
 	ba.add_child(gun)
 	gun.transform = _gun_offset
-	var m := Models.make("ak")
-	m.rotation.y = PI / 2.0
+	var m := Models.weapon("ak", true)
 	m.position = Vector3(0, 0.04, -0.2)
 	gun.add_child(m)
 

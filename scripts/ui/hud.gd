@@ -10,6 +10,7 @@ signal quit_pressed
 
 const UI = preload("res://scripts/core/ui.gd")
 const Weapons = preload("res://scripts/player/weapons.gd")
+const FeedScript = preload("res://scripts/ui/video_feed.gd")
 
 const SPEAKERS := {"malik": "MAJOR MALIK", "kade": "KADE", "raven": "RAVEN 2-6", "rauf": "LT. RAUF"}
 const TIPS := [
@@ -281,6 +282,8 @@ func setup(p, m) -> void:
 		root.add_child(bar)
 		cine_bars.append(bar)
 	_build_map()
+	var feed := FeedScript.new()
+	root.add_child(feed)
 	fade_rect = ColorRect.new()
 	fade_rect.color = Color(0, 0, 0, 0)
 	UI.full_rect(fade_rect)
@@ -593,7 +596,9 @@ func _update_marker() -> void:
 	if marker_pos == null or player.dead or player.mode == 3 or player.binocs:
 		marker.visible = false
 		return
-	var cam: Camera3D = player.cam
+	var cam: Camera3D = get_viewport().get_camera_3d()
+	if cam == null:
+		return
 	var vp := root.get_viewport_rect().size
 	var wp: Vector3 = marker_pos
 	if absf((wp - cam.global_position).dot(-cam.global_transform.basis.z)) < 0.05:

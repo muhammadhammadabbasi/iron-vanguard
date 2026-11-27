@@ -2,7 +2,8 @@ extends "res://scripts/missions/mission_base.gd"
 ## Mission 3: THE WATCHERS - hilltop radar station at dusk: shut down cameras, blow the radar dish, extract.
 
 const TOP := Vector3(0, 0, 0)
-const START := Vector3(10, 0, 150)
+const START := Vector3(10, 0, 290)
+const POST := Vector3(70, 0, 170)
 const CONTROL := Vector3(-12, 0, -10)
 const RADAR := Vector3(14, 0, -16)
 const PAD := Vector3(26, 0, 14)
@@ -16,22 +17,27 @@ var drop_heli
 
 
 func _build_level() -> void:
-	map_center = Vector3(0, 0, 40)
-	map_size = 280.0
-	atmosphere("belfast_sunset_puresky", Vector3(-6, -110, 0), Color(1.0, 0.62, 0.42), 1.4, Color(0.55, 0.46, 0.46), 0.0016, 0.9, 0.9)
+	map_center = Vector3(10, 0, 110)
+	map_size = 460.0
+	atmosphere("belfast_sunset_puresky", Vector3(-9, -110, 0), Color(1.0, 0.66, 0.46), 1.5, Color(0.6, 0.5, 0.48), 0.0011, 0.95, 0.88)
 	make_terrain({
-		"size": 440.0, "amplitude": 5.0, "rim_start": 170.0, "rim_height": 55.0, "seed_value": 33,
+		"amplitude": 5.0, "rim_start": 330.0, "rim_height": 85.0, "seed_value": 33,
 		"layer_low": "forrest_ground_01", "layer_mid": "dirt", "layer_rock": "rocky_terrain_02",
-		"hills": [{"pos": TOP, "radius": 95.0, "height": 26.0}],
+		"patch_a": Color(0.55, 0.5, 0.3), "patch_b": Color(0.28, 0.3, 0.18),
+		"hills": [{"pos": TOP, "radius": 160.0, "height": 11.0}],
 		"flats": [
-			{"pos": TOP, "radius": 40.0, "blend": 18.0, "height": 27.0},
-			{"pos": START, "radius": 16.0, "blend": 14.0, "height": 2.0},
+			{"pos": TOP, "radius": 44.0, "blend": 34.0, "height": 12.0},
+			{"pos": START, "radius": 18.0, "blend": 16.0, "height": 2.0},
+			{"pos": POST, "radius": 16.0, "blend": 14.0, "height": 4.0},
 		],
 	})
-	road([Vector3(10, 0, 160), Vector3(30, 0, 110), Vector3(34, 0, 70), Vector3(14, 0, 44), Vector3(2, 0, 38)], 5.5, "gravel")
+	road([Vector3(10, 0, 300), Vector3(30, 0, 230), Vector3(56, 0, 175), Vector3(34, 0, 90), Vector3(14, 0, 52), Vector3(4, 0, 36)], 5.5, "gravel")
 	_station()
-	scatter("pine", 140, Vector3(0, 0, 40), 190.0, [[TOP, 48.0], [START, 18.0], [Vector3(30, 0, 110), 8.0], [Vector3(34, 0, 70), 8.0]], 0.0, "trunk", Vector2(0.7, 1.25))
-	scatter("rocks", 45, Vector3(0, 0, 30), 180.0, [[TOP, 44.0], [START, 16.0]], 0.0, "none", Vector2(0.6, 2.0))
+	var avoid := [[TOP, 50.0], [START, 22.0], [POST, 20.0]]
+	scatter("pine", 300, Vector3(10, 0, 110), 380.0, avoid, 0.0, "trunk", Vector2(0.7, 1.3))
+	scatter("rocks", 70, Vector3(10, 0, 110), 360.0, avoid, 0.0, "none", Vector2(0.6, 2.0))
+	_forest_post()
+	grass(Color(0.2, 0.22, 0.09), Color(0.55, 0.5, 0.24))
 	_enemies()
 
 
@@ -81,9 +87,18 @@ func _station() -> void:
 		cameras.append(cam)
 	alarm_panel(Vector3(-2, 0, -2))
 	alarm_panel(Vector3(18, 0, 26))
-	alarm.reinforcement_points = [ground(Vector3(30, 0, 110)) + Vector3.UP, ground(Vector3(-40, 0, -120)) + Vector3.UP]
+	alarm.reinforcement_points = [ground(Vector3(34, 0, 90)) + Vector3.UP, ground(Vector3(-40, 0, -160)) + Vector3.UP]
 	pickup("medkit", ground(Vector3(14, 0, 18)))
 	pickup("weapon", ground(Vector3(-18, 0, -18)), "svd", 10)
+
+
+func _forest_post() -> void:
+	house(POST + Vector3(0, 0, -3), Vector3(7, 2.8, 5), [["s", 0.0, 1.4, 0.0, 2.2], ["w", 0.0, 1.3, 1.0, 2.0]], "red_brick", "pitched")
+	place("jeep", POST.x + 7.0, POST.z + 5.0, 0.8, "box")
+	place("sandbags", POST.x - 4.0, POST.z + 6.0, 0.2, "box")
+	var cam = security_camera(POST + Vector3(-7, 0, 4), PI * 0.85, 3.6)
+	cameras.append(cam)
+	pickup("medkit", ground(POST + Vector3(0, 0, -3)))
 
 
 func _enemies() -> void:
@@ -102,6 +117,10 @@ func _enemies() -> void:
 	spawn_enemy(Vector3(26, 0, 6), Vector3(36, 0, 10))
 	spawn_enemy(Vector3(30, 0, 90), Vector3.ZERO, [Vector3(30, 0, 90), Vector3(36, 0, 60), Vector3(16, 0, 44)])
 	spawn_enemy(Vector3(-24, 0, 60), Vector3.ZERO, [Vector3(-24, 0, 60), Vector3(-44, 0, 20), Vector3(-30, 0, 70)])
+	spawn_enemy(POST + Vector3(2, 0, 4), POST + Vector3(-20, 0, 40))
+	spawn_enemy(POST + Vector3(0, 0, -3), POST + Vector3(0, 0, 10))
+	spawn_enemy(POST + Vector3(-6, 0, 0), Vector3.ZERO, [POST + Vector3(-6, 0, 0), Vector3(30, 0, 230), Vector3(56, 0, 175)])
+	spawn_enemy(Vector3(-60, 0, 120), Vector3.ZERO, [Vector3(-60, 0, 120), Vector3(-30, 0, 200), Vector3(-80, 0, 60)])
 
 
 # ================================================================ flow
@@ -117,7 +136,7 @@ func start() -> void:
 	actors.add_child(drop_heli)
 	drop_heli.global_position = ground(START) + Vector3(14, 0.1, 10)
 	drop_heli.rotation.y = 0.4
-	drop_heli.take_off(ground(START) + Vector3(220, 120, 260), 16.0)
+	drop_heli.take_off(ground(START) + Vector3(160, 120, 120), 16.0)
 	get_tree().create_timer(18.0, false).timeout.connect(drop_heli.queue_free)
 	step = 1
 	save_checkpoint()

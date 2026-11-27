@@ -22,9 +22,9 @@ func _ready() -> void:
 	add_child(visual)
 	match kind:
 		"weapon":
-			var m := Models.make(item, false)
+			var m := Models.weapon(item)
 			visual.add_child(m)
-			m.rotate_object_local(Vector3.RIGHT, PI / 2.0)
+			m.rotate_object_local(Vector3.FORWARD, PI / 2.0)
 			visual.rotation.y = randf() * TAU
 			visual.position.y = -0.2
 		"medkit":

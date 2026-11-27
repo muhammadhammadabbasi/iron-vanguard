@@ -153,17 +153,102 @@ func give_weapon(id: String, quiet := false) -> bool:
 	return true
 
 
+var _sleeve_mat: Material
+var _glove_mat: Material
+
+
 func _build_gun_model(id: String) -> void:
 	var d: Dictionary = Weapons.get_def(id)
 	var holder := Node3D.new()
 	holder.visible = false
 	gun_holder.add_child(holder)
-	var model: Node3D = Models.make(d.model, false)
+	var model: Node3D = Models.weapon(d.model)
 	holder.add_child(model)
-	# source models have the muzzle along +X: turn it to -Z
-	model.rotation = Vector3(0, PI / 2.0, 0) + d.get("vm_rot", Vector3.ZERO)
 	model.position = d.get("vm_offset", Vector3.ZERO)
+	model.rotation += d.get("vm_rot", Vector3.ZERO)
+	_build_arms(holder, d)
+	Geo_no_shadow(holder)
 	gun_models[id] = holder
+
+
+func _arm_materials() -> void:
+	if _sleeve_mat != null:
+		return
+	var k := Models.character("kade")
+	for mi in k.find_children("*", "MeshInstance3D", true, false):
+		var m = mi.get_active_material(0)
+		if m != null:
+			_sleeve_mat = m
+			break
+	k.free()
+	if _sleeve_mat == null:
+		_sleeve_mat = Fx.mats["sleeve"]
+	var g := StandardMaterial3D.new()
+	g.albedo_color = Color(0.09, 0.085, 0.08)
+	g.roughness = 0.75
+	_glove_mat = g
+
+
+## Forearms + gloved hands holding the weapon (in weapon-holder space).
+func _build_arms(holder: Node3D, d: Dictionary) -> void:
+	_arm_materials()
+	var grip: Vector3 = d.get("grip", Vector3(0, -0.06, 0.0))
+	_arm(holder, Vector3(0.2, -0.42, 0.38), grip + Vector3(0.012, 0, 0), true)
+	if d.has("fore"):
+		_arm(holder, Vector3(-0.36, -0.4, 0.16), d.fore + Vector3(-0.012, -0.012, 0), false)
+
+
+func _arm(holder: Node3D, elbow: Vector3, hand: Vector3, right: bool) -> void:
+	var v := hand - elbow
+	var length := v.length()
+	var y := v / length
+	var x := y.cross(Vector3.FORWARD).normalized()
+	if x.length() < 0.1:
+		x = Vector3.RIGHT
+	var z := x.cross(y).normalized()
+	var fore := MeshInstance3D.new()
+	var cm := CapsuleMesh.new()
+	cm.radius = 0.036
+	cm.height = length + 0.08
+	cm.radial_segments = 12
+	fore.mesh = cm
+	fore.material_override = _sleeve_mat
+	fore.transform = Transform3D(Basis(x, y, z), elbow + v * 0.5)
+	holder.add_child(fore)
+	var cuff := MeshInstance3D.new()
+	var cy := CylinderMesh.new()
+	cy.top_radius = 0.04
+	cy.bottom_radius = 0.04
+	cy.height = 0.05
+	cuff.mesh = cy
+	cuff.material_override = _glove_mat
+	cuff.transform = Transform3D(Basis(x, y, z), hand - y * 0.06)
+	holder.add_child(cuff)
+	var glove := MeshInstance3D.new()
+	var gm := CapsuleMesh.new()
+	gm.radius = 0.03
+	gm.height = 0.12
+	glove.mesh = gm
+	glove.material_override = _glove_mat
+	# fist wrapped around the grip: lying across the weapon
+	glove.transform = Transform3D(Basis(Vector3.FORWARD, PI / 2.0 if right else -PI / 2.0).rotated(Vector3.UP, 0.25 if right else -0.25), hand + Vector3(0, 0.0, 0.0))
+	holder.add_child(glove)
+	var thumb := MeshInstance3D.new()
+	var tm := CapsuleMesh.new()
+	tm.radius = 0.014
+	tm.height = 0.06
+	thumb.mesh = tm
+	thumb.material_override = _glove_mat
+	thumb.position = hand + Vector3(-0.02 if right else 0.02, 0.025, -0.02)
+	thumb.rotation = Vector3(-1.1, 0, 0)
+	holder.add_child(thumb)
+
+
+func Geo_no_shadow(n: Node) -> void:
+	if n is GeometryInstance3D:
+		n.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	for c in n.get_children():
+		Geo_no_shadow(c)
 
 
 func equip(id: String, instant := false) -> void:
@@ -458,6 +543,51 @@ func _footsteps(delta: float) -> void:
 			Sfx.play("step%d" % randi_range(1, 3), -11.0 if sprinting else -17.0, 0.1)
 
 
+# ---------------------------------------------------------------- third-person body (skydive / parachute)
+
+var body: Node3D
+var body_ap: AnimationPlayer
+var tp_cam: Camera3D
+
+
+func _ensure_body() -> void:
+	if body != null:
+		return
+	body = Models.character("kade")
+	body.rotation.y = PI
+	add_child(body)
+	body_ap = AnimationPlayer.new()
+	body.add_child(body_ap)
+	body_ap.add_animation_library("", Models.anim_library("kade"))
+	tp_cam = Camera3D.new()
+	tp_cam.far = 6000.0
+	tp_cam.fov = 70.0
+	add_child(tp_cam)
+	body.visible = false
+
+
+func third_person(on: bool, pose := "freefall") -> void:
+	_ensure_body()
+	body.visible = on
+	if on:
+		body_ap.play(pose, 0.3)
+		tp_cam.current = true
+	else:
+		cam.current = true
+
+
+func _tp_update(delta: float) -> void:
+	if body == null or not body.visible:
+		return
+	var target_rot := Vector3(-1.35, PI, 0) if mode == Mode.FREEFALL else Vector3(0, PI, 0)
+	body.rotation = body.rotation.lerp(target_rot, 1.0 - exp(-4.0 * delta))
+	body.position = Vector3(0, 0.9, 0) if mode == Mode.FREEFALL else Vector3(0, 0, 0)
+	var off := Vector3(0, 3.2, 7.5) if mode == Mode.FREEFALL else Vector3(0, 4.5, 10.5)
+	tp_cam.position = tp_cam.position.lerp(off, 1.0 - exp(-3.0 * delta))
+	var look := Vector3(0, -2.5, -6.0) if mode == Mode.FREEFALL else Vector3(0, 2.5, -4.0)
+	tp_cam.look_at(global_transform * look, Vector3.UP)
+
+
 # ---------------------------------------------------------------- parachute
 
 func start_freefall(from_pos: Vector3, heading: float) -> void:
@@ -467,6 +597,8 @@ func start_freefall(from_pos: Vector3, heading: float) -> void:
 	pitch = -0.9
 	velocity = Basis(Vector3.UP, heading) * Vector3(0, 0, -20)
 	vm.visible = false
+	third_person(true, "freefall")
+	tp_cam.position = Vector3(0, 3.2, 7.5)
 	wind_player.volume_db = -4.0
 	wind_player.play()
 	if not wind_player.finished.is_connected(wind_player.play):
@@ -505,7 +637,11 @@ func open_chute() -> void:
 	if Models.has("parachute"):
 		chute = Models.make("parachute", false)
 		add_child(chute)
-		chute.position = Vector3(0, 6.2, -1.6)
+		chute.position = Vector3(0, 7.0, 0.0)
+		chute.scale = Vector3.ONE * 0.2
+		var tw := chute.create_tween()
+		tw.tween_property(chute, "scale", Vector3.ONE, 0.9).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	third_person(true, "idle")
 	chute_speed = 9.0
 
 
@@ -551,6 +687,8 @@ func _land(hard: bool) -> void:
 		tw.tween_callback(c.queue_free)
 	vm.visible = true
 	pitch = 0.0
+	if body != null:
+		third_person(false)
 	landed.emit()
 
 
@@ -579,6 +717,7 @@ func stop_ride(at: Vector3) -> void:
 # ---------------------------------------------------------------- visuals
 
 func _process(delta: float) -> void:
+	_tp_update(delta)
 	if flash_t > 0.0:
 		flash_t -= delta
 		if flash_t <= 0.0:
@@ -717,6 +856,8 @@ func respawn(cp: Dictionary) -> void:
 	cam.rotation = Vector3.ZERO
 	vm.visible = true
 	col.disabled = false
+	if body != null:
+		third_person(false)
 	var cur: String = cp.current
 	current = ""
 	equip(cur, true)

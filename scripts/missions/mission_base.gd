@@ -101,12 +101,26 @@ func _process(delta: float) -> void:
 	t += delta
 	_dialogue(delta)
 	_step(delta)
+	_safety_net()
 	if player != null and not player.dead:
 		if player.hp < 35.0 and player.medkits > 0 and not low_health_said:
 			low_health_said = true
 			say(["g_lowhealth"])
 		elif player.hp > 60.0:
 			low_health_said = false
+
+
+## Never let the player fall through the world: if he ends up under the terrain, put him back on top.
+func _safety_net() -> void:
+	if player == null or terrain == null or player.mode == 3:
+		return
+	var p: Vector3 = player.global_position
+	var g := h(p.x, p.z)
+	if p.y < g - 3.0 or p.y < -200.0:
+		player.global_position = Vector3(p.x, g + 1.0, p.z)
+		player.velocity = Vector3.ZERO
+		if player.mode != 0:
+			player._land(false)
 
 
 # ================================================================ atmosphere
@@ -168,14 +182,21 @@ func make_terrain(cfg: Dictionary) -> void:
 		terrain.set(k, cfg[k])
 	nav.add_child(terrain)
 	terrain.setup()
-	var far := MeshInstance3D.new()
-	var pm := PlaneMesh.new()
-	pm.size = Vector2(9000, 9000)
-	far.mesh = pm
-	far.material_override = Fx.pbr(cfg.get("layer_low", "forrest_ground_01"), 0.02, Color(0.8, 0.8, 0.8))
-	far.position.y = terrain.rim_height * 0.55
-	far.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	add_child(far)
+
+
+const GrassScript = preload("res://scripts/world/grass.gd")
+
+
+## Wind-swept grass streamed around the player; never inside the flattened base areas.
+func grass(base_col: Color, tip_col: Color, extra_avoid := []) -> void:
+	var g := GrassScript.new()
+	g.name = "Grass"
+	add_child(g)
+	var av := extra_avoid.duplicate()
+	for f in terrain.flats:
+		av.append([f.pos, f.radius + 2.0])
+	g.avoid = av
+	g.setup(terrain, Game.quality, [base_col, tip_col])
 
 
 func h(x: float, z: float) -> float:
@@ -235,7 +256,7 @@ func scatter(id: String, count: int, center: Vector3, radius: float, avoid: Arra
 		n.rotation.y = rng.randf() * TAU
 		n.scale = Vector3.ONE * rng.randf_range(scale_range.x, scale_range.y)
 		for mi in n.find_children("*", "MeshInstance3D", true, false):
-			mi.visibility_range_end = 260.0
+			mi.visibility_range_end = [450.0, 900.0, 1400.0][Game.quality]
 			mi.visibility_range_end_margin = 20.0
 			mi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
 		placed += 1

@@ -1,7 +1,8 @@
 extends "res://scripts/missions/mission_base.gd"
 ## Mission 2: SILENT PASS - helicopter insertion, village + border checkpoint, antenna, keycard, gate, meet Rauf.
 
-const LZ := Vector3(4, 0, 150)
+const LZ := Vector3(4, 0, 300)
+const FARM := Vector3(36, 0, 190)
 const GATE := Vector3(0, 0, 0)
 const ANTENNA := Vector3(28, 0, 16)
 const CMD_HOUSE := Vector3(-19, 0, 52)
@@ -20,32 +21,40 @@ var walls: Array = []
 
 
 func _build_level() -> void:
-	map_center = Vector3(0, 0, 40)
-	map_size = 280.0
-	atmosphere("kloofendal_48d_partly_cloudy_puresky", Vector3(-52, 35, 0), Color(1.0, 0.95, 0.88), 1.6, Color(0.72, 0.78, 0.85), 0.0011, 1.0, 0.85)
+	map_center = Vector3(0, 0, 110)
+	map_size = 480.0
+	atmosphere("kloofendal_48d_partly_cloudy_puresky", Vector3(-52, 35, 0), Color(1.0, 0.95, 0.88), 1.7, Color(0.72, 0.78, 0.86), 0.0007, 1.0, 0.82)
 	make_terrain({
-		"size": 440.0, "amplitude": 4.0, "rim_start": 150.0, "rim_height": 80.0, "seed_value": 22,
-		"layer_low": "dirt", "layer_mid": "gravel", "layer_rock": "rocky_terrain_02", "layer_high": "snow_02", "snow_line": 48.0,
+		"amplitude": 4.0, "rim_start": 320.0, "rim_height": 110.0, "seed_value": 22,
+		"layer_low": "dirt", "layer_mid": "gravel", "layer_rock": "rocky_terrain_02", "layer_high": "snow_02", "snow_line": 52.0,
+		"patch_a": Color(0.62, 0.6, 0.4), "patch_b": Color(0.36, 0.38, 0.24),
 		"flats": [
 			{"pos": Vector3(0, 0, 40), "radius": 46.0, "blend": 16.0, "height": 3.0},
 			{"pos": Vector3(0, 0, -40), "radius": 34.0, "blend": 14.0, "height": 3.0},
-			{"pos": LZ, "radius": 18.0, "blend": 14.0, "height": 3.0},
-			{"pos": Vector3(0, 0, 100), "radius": 22.0, "blend": 14.0, "height": 3.0},
+			{"pos": LZ, "radius": 20.0, "blend": 16.0, "height": 3.0},
+			{"pos": Vector3(0, 0, 110), "radius": 24.0, "blend": 16.0, "height": 3.0},
+			{"pos": FARM, "radius": 22.0, "blend": 14.0, "height": 3.5},
 		],
 		"hills": [
-			{"pos": Vector3(-95, 0, 10), "radius": 70.0, "height": 55.0},
-			{"pos": Vector3(95, 0, 10), "radius": 70.0, "height": 55.0},
-			{"pos": Vector3(-90, 0, 90), "radius": 60.0, "height": 40.0},
-			{"pos": Vector3(90, 0, 100), "radius": 60.0, "height": 42.0},
-			{"pos": Vector3(-80, 0, -80), "radius": 60.0, "height": 45.0},
-			{"pos": Vector3(80, 0, -80), "radius": 60.0, "height": 45.0},
+			{"pos": Vector3(-100, 0, 10), "radius": 75.0, "height": 60.0},
+			{"pos": Vector3(100, 0, 10), "radius": 75.0, "height": 60.0},
+			{"pos": Vector3(-105, 0, 120), "radius": 75.0, "height": 55.0},
+			{"pos": Vector3(110, 0, 110), "radius": 70.0, "height": 55.0},
+			{"pos": Vector3(-100, 0, 240), "radius": 80.0, "height": 58.0},
+			{"pos": Vector3(115, 0, 260), "radius": 75.0, "height": 50.0},
+			{"pos": Vector3(-90, 0, -90), "radius": 70.0, "height": 55.0},
+			{"pos": Vector3(90, 0, -90), "radius": 70.0, "height": 55.0},
 		],
 	})
-	road([Vector3(4, 0, 170), Vector3(2, 0, 120), Vector3(0, 0, 70), Vector3(0, 0, 0), Vector3(-2, 0, -60), Vector3(-6, 0, -130)], 6.5, "asphalt_02")
+	road([Vector3(4, 0, 440), Vector3(4, 0, 320), Vector3(8, 0, 240), Vector3(2, 0, 160), Vector3(0, 0, 70), Vector3(0, 0, 0), Vector3(-2, 0, -60), Vector3(-6, 0, -200), Vector3(-10, 0, -440)], 6.5, "asphalt_02")
+	road([Vector3(8, 0, 200), Vector3(36, 0, 190)], 4.0, "gravel")
 	_checkpoint()
 	_village()
-	scatter("pine", 110, Vector3(0, 0, 40), 190.0, [[Vector3(0, 0, 40), 52.0], [Vector3(0, 0, -40), 36.0], [LZ, 22.0], [Vector3(0, 0, 100), 20.0]], 0.0, "trunk", Vector2(0.7, 1.2))
-	scatter("rocks", 50, Vector3(0, 0, 30), 170.0, [[Vector3(0, 0, 40), 50.0], [Vector3(0, 0, -40), 34.0], [LZ, 18.0]], 0.0, "none", Vector2(0.8, 2.2))
+	var avoid := [[Vector3(0, 0, 40), 52.0], [Vector3(0, 0, -40), 36.0], [LZ, 24.0], [Vector3(0, 0, 110), 26.0], [FARM, 26.0]]
+	scatter("pine", 260, Vector3(0, 0, 110), 360.0, avoid, 0.0, "trunk", Vector2(0.7, 1.25))
+	scatter("rocks", 80, Vector3(0, 0, 110), 340.0, avoid, 0.0, "none", Vector2(0.8, 2.4))
+	_farm()
+	grass(Color(0.3, 0.3, 0.12), Color(0.68, 0.64, 0.34), [[Vector3(0, 0, 0), 20.0]])
 	_bounds()
 	_enemies()
 
@@ -118,6 +127,16 @@ func _village() -> void:
 	pickup("weapon", ground(Vector3(16, 0, 66)), "svd", 10)
 
 
+func _farm() -> void:
+	house(FARM + Vector3(-4, 0, -2), Vector3(9, 3.0, 7), [["w", 0.0, 1.5, 0.0, 2.2], ["s", 2.0, 1.4, 1.0, 2.0]], "red_brick", "pitched", 0.2)
+	place("tent", FARM.x + 8.0, FARM.z + 6.0, 0.5, "box")
+	place("ural", FARM.x + 6.0, FARM.z - 8.0, 1.6, "box")
+	for i in 4:
+		place("crates", FARM.x - 10.0 + i * 2.6, FARM.z + 9.0, 0.1 * i, "box")
+	pickup("medkit", ground(FARM + Vector3(-4, 0, -2)))
+	pickup("grenade", ground(FARM + Vector3(-2, 0, -1)))
+
+
 func _bounds() -> void:
 	# keep the player in the valley (the slopes are steep but not impossible)
 	for side in [-1.0, 1.0]:
@@ -126,10 +145,10 @@ func _bounds() -> void:
 		add_child(sb)
 		var cs := CollisionShape3D.new()
 		var bs := BoxShape3D.new()
-		bs.size = Vector3(2, 200, 400)
+		bs.size = Vector3(2, 300, 900)
 		cs.shape = bs
 		sb.add_child(cs)
-		sb.position = Vector3(side * 62.0, 50, 20)
+		sb.position = Vector3(side * 64.0, 100, 0)
 
 
 func _enemies() -> void:
@@ -147,6 +166,12 @@ func _enemies() -> void:
 	spawn_enemy(Vector3(14, 0, 72), Vector3(0, 0, 100))
 	spawn_enemy(Vector3(-4, 0, -12), Vector3(0, 0, -2))
 	spawn_enemy(Vector3(10, 0, -18), Vector3(0, 0, -2))
+	# farm + road patrols south of the village
+	spawn_enemy(FARM + Vector3(2, 0, 2), Vector3(0, 0, 190))
+	spawn_enemy(FARM + Vector3(-4, 0, -2), FARM + Vector3(-4, 0, 10))
+	spawn_enemy(FARM + Vector3(8, 0, -4), Vector3.ZERO, [FARM + Vector3(8, 0, -4), FARM + Vector3(20, 0, 30), FARM + Vector3(-20, 0, 20)])
+	spawn_enemy(Vector3(0, 0, 120), Vector3.ZERO, [Vector3(0, 0, 120), Vector3(6, 0, 230), Vector3(-4, 0, 150)])
+	spawn_enemy(Vector3(-20, 0, 140), Vector3(0, 0, 200))
 
 
 # ================================================================ flow
@@ -161,7 +186,7 @@ func start() -> void:
 	player.set_yaw(0.0)
 	hud.cinematic(true, 0.01)
 	objective("Insertion")
-	var tw: Tween = insertion_heli.fly_in(ground(LZ) + Vector3(60, 90, 260), ground(LZ), 0.15, 16.0)
+	var tw: Tween = insertion_heli.fly_in(ground(LZ) + Vector3(60, 90, 140), ground(LZ), 0.15, 16.0)
 	tw.finished.connect(_landed_insertion)
 	say(["m2_intro_1"])
 
@@ -170,7 +195,7 @@ func _landed_insertion() -> void:
 	player.stop_ride(ground(LZ) + Vector3(-3.5, 0.3, -5.0))
 	player.set_yaw(0.0)
 	hud.cinematic(false)
-	insertion_heli.take_off(ground(LZ) + Vector3(-120, 90, 300), 14.0)
+	insertion_heli.take_off(ground(LZ) + Vector3(-60, 90, 140), 14.0)
 	get_tree().create_timer(18.0, false).timeout.connect(insertion_heli.queue_free)
 	step = 1
 	save_checkpoint()
